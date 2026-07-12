@@ -52,26 +52,28 @@ const vehicles = [
 ];
 
 const drivers = [
-    { driverName: 'Michael Carter', licenseNumber: 'CDL-98210', licenseCategory: 'Class A CDL', expiryDate: '2026-11-20', phone: '+1 (555) 201-3456', safetyScore: 92, status: 'Available' },
-    { driverName: 'Sarah Mitchell', licenseNumber: 'CDL-45330', licenseCategory: 'Class B CDL', expiryDate: '2025-08-15', phone: '+1 (555) 302-4567', safetyScore: 88, status: 'On Trip' },
-    { driverName: 'David Thompson', licenseNumber: 'STD-67890', licenseCategory: 'Standard Passenger', expiryDate: '2026-03-10', phone: '+1 (555) 403-5678', safetyScore: 78, status: 'Off Duty' },
-    { driverName: 'Emily Rodriguez', licenseNumber: 'CDL-23140', licenseCategory: 'Class A CDL', expiryDate: '2027-01-25', phone: '+1 (555) 504-6789', safetyScore: 95, status: 'Available' },
-    { driverName: 'James Wilson', licenseNumber: 'CDL-78560', licenseCategory: 'Class C', expiryDate: '2025-12-05', phone: '+1 (555) 605-7890', safetyScore: 71, status: 'Suspended' },
-    { driverName: 'Lisa Chen', licenseNumber: 'CDL-34500', licenseCategory: 'Class B CDL', expiryDate: '2026-06-18', phone: '+1 (555) 706-8901', safetyScore: 84, status: 'On Trip' },
-    { driverName: 'Robert Anderson', licenseNumber: 'STD-11280', licenseCategory: 'Standard Passenger', expiryDate: '2026-09-30', phone: '+1 (555) 807-9012', safetyScore: 90, status: 'Available' },
-    { driverName: 'Maria Gonzalez', licenseNumber: 'CDL-56700', licenseCategory: 'Class A CDL', expiryDate: '2027-04-12', phone: '+1 (555) 908-0123', safetyScore: 97, status: 'Available' },
+    { driverName: 'Michael Carter', email: 'michael.carter@transitops.com', licenseNumber: 'CDL-98210', licenseCategory: 'Class A CDL', expiryDate: '2026-11-20', phone: '+1 (555) 201-3456', safetyScore: 92, status: 'Available' },
+    { driverName: 'Sarah Mitchell', email: 'sarah.mitchell@transitops.com', licenseNumber: 'CDL-45330', licenseCategory: 'Class B CDL', expiryDate: '2025-08-15', phone: '+1 (555) 302-4567', safetyScore: 88, status: 'On Trip' },
+    { driverName: 'David Thompson', email: 'david.thompson@transitops.com', licenseNumber: 'STD-67890', licenseCategory: 'Standard Passenger', expiryDate: '2026-03-10', phone: '+1 (555) 403-5678', safetyScore: 78, status: 'Off Duty' },
+    { driverName: 'Emily Rodriguez', email: 'emily.rodriguez@transitops.com', licenseNumber: 'CDL-23140', licenseCategory: 'Class A CDL', expiryDate: '2027-01-25', phone: '+1 (555) 504-6789', safetyScore: 95, status: 'Available' },
+    { driverName: 'James Wilson', email: 'james.wilson@transitops.com', licenseNumber: 'CDL-78560', licenseCategory: 'Class C', expiryDate: '2025-12-05', phone: '+1 (555) 605-7890', safetyScore: 71, status: 'Suspended' },
+    { driverName: 'Lisa Chen', email: 'lisa.chen@transitops.com', licenseNumber: 'CDL-34500', licenseCategory: 'Class B CDL', expiryDate: '2026-06-18', phone: '+1 (555) 706-8901', safetyScore: 84, status: 'On Trip' },
+    { driverName: 'Robert Anderson', email: 'robert.anderson@transitops.com', licenseNumber: 'STD-11280', licenseCategory: 'Standard Passenger', expiryDate: '2026-09-30', phone: '+1 (555) 807-9012', safetyScore: 90, status: 'Available' },
+    { driverName: 'Maria Gonzalez', email: 'maria.gonzalez@transitops.com', licenseNumber: 'CDL-56700', licenseCategory: 'Class A CDL', expiryDate: '2027-04-12', phone: '+1 (555) 908-0123', safetyScore: 97, status: 'Available' },
 ];
 
-const trips = [
-    { tripId: 'TR001', source: 'Dallas Hub', destination: 'Houston Depot', vehicleId: 'TRN-4521', driverName: 'Michael Carter', cargoWeight: 14200, plannedDistance: 385, estDuration: 6, departureDate: '2026-01-15', status: 'Completed', eta: 'Done', progress: 100, type: 'Truck', region: 'South' },
-    { tripId: 'TR002', source: 'Austin Center', destination: 'San Antonio Port', vehicleId: 'TRN-7832', driverName: 'Sarah Mitchell', cargoWeight: 2800, plannedDistance: 128, estDuration: 2, departureDate: '2026-01-18', status: 'On Trip', eta: '2h 15m', progress: 65, type: 'Van', region: 'South' },
-    { tripId: 'TR003', source: 'Denver Warehouse', destination: 'Phoenix Terminal', vehicleId: 'TRN-1290', driverName: 'Emily Rodriguez', cargoWeight: 0, plannedDistance: 602, estDuration: 9, departureDate: '2026-01-20', status: 'Dispatched', eta: '8h 40m', progress: 10, type: 'Electric', region: 'West' },
-    { tripId: 'TR004', source: 'Chicago Yard', destination: 'Detroit Facility', vehicleId: 'TRN-8901', driverName: 'Lisa Chen', cargoWeight: 22000, plannedDistance: 283, estDuration: 4.5, departureDate: '2026-01-22', status: 'On Trip', eta: '3h 20m', progress: 42, type: 'Truck', region: 'North' },
-    { tripId: 'TR005', source: 'Miami Docks', destination: 'Orlando Center', vehicleId: 'TRN-3345', driverName: 'Robert Anderson', cargoWeight: 900, plannedDistance: 235, estDuration: 3.5, departureDate: '2026-01-25', status: 'Scheduled', eta: 'TBD', progress: 0, type: 'SUV', region: 'East' },
-    { tripId: 'TR006', source: 'Seattle Port', destination: 'Portland Hub', vehicleId: 'TRN-2234', driverName: 'David Thompson', cargoWeight: 0, plannedDistance: 174, estDuration: 3, departureDate: '2026-01-28', status: 'Draft', eta: 'TBD', progress: 0, type: 'Sedan', region: 'West' },
-    { tripId: 'TR007', source: 'LA Distribution', destination: 'Las Vegas Depot', vehicleId: 'TRN-9900', driverName: 'Maria Gonzalez', cargoWeight: 0, plannedDistance: 270, estDuration: 4, departureDate: '2026-02-01', status: 'On Trip', eta: '1h 45m', progress: 78, type: 'Electric', region: 'West' },
-    { tripId: 'TR008', source: 'Boston Terminal', destination: 'New York Hub', vehicleId: 'TRN-4410', driverName: 'Michael Carter', cargoWeight: 0, plannedDistance: 215, estDuration: 4, departureDate: '2026-02-05', status: 'Delayed', eta: '5h 10m', progress: 30, type: 'Hybrid', region: 'East' },
+// Trips are seeded dynamically after vehicles are inserted (need ObjectIds)
+const tripSeedData = [
+    { regNum: 'TRN-4521', driver: 'Michael Carter', type: 'Truck', region: 'South', status: 'Completed', departure: new Date('2026-01-15') },
+    { regNum: 'TRN-7832', driver: 'Sarah Mitchell', type: 'Van', region: 'South', status: 'In Progress', departure: new Date('2026-01-18') },
+    { regNum: 'TRN-1290', driver: 'Emily Rodriguez', type: 'Electric', region: 'West', status: 'Scheduled', departure: new Date('2026-01-20') },
+    { regNum: 'TRN-8901', driver: 'Lisa Chen', type: 'Truck', region: 'North', status: 'In Progress', departure: new Date('2026-01-22') },
+    { regNum: 'TRN-3345', driver: 'Robert Anderson', type: 'SUV', region: 'East', status: 'Scheduled', departure: new Date('2026-01-25') },
+    { regNum: 'TRN-2234', driver: 'David Thompson', type: 'Sedan', region: 'West', status: 'Scheduled', departure: new Date('2026-01-28') },
+    { regNum: 'TRN-9900', driver: 'Maria Gonzalez', type: 'Electric', region: 'West', status: 'In Progress', departure: new Date('2026-02-01') },
+    { regNum: 'TRN-4410', driver: 'Michael Carter', type: 'Hybrid', region: 'East', status: 'Delayed', departure: new Date('2026-02-05') },
 ];
+
 
 const maintenance = [
     { vehicleId: 'TRN-4521', type: 'Oil Change', mechanic: 'AutoPro Services', issueDescription: 'Routine oil and filter change at 120K km.', cost: 450, startDate: '2026-01-10', endDate: '2026-01-10', status: 'Completed' },
@@ -168,20 +170,35 @@ async function seed() {
         }
         console.log(`   -> ${users.length} users created`);
 
-        // Seed Vehicles
+        // Seed Vehicles (capture returned docs for ObjectId mapping)
         console.log('Seeding Vehicles...');
-        await Vehicle.insertMany(vehicles);
-        console.log(`   -> ${vehicles.length} vehicles created`);
+        const insertedVehicles = await Vehicle.insertMany(vehicles);
+        console.log(`   -> ${insertedVehicles.length} vehicles created`);
 
         // Seed Drivers
         console.log('Seeding Drivers...');
         await Driver.insertMany(drivers);
         console.log(`   -> ${drivers.length} drivers created`);
 
-        // Seed Trips (manual create to skip tripId pre-save since we provide IDs)
+        // Seed Trips — map regNum -> _id from inserted docs directly
         console.log('Seeding Trips...');
-        await Trip.insertMany(trips);
-        console.log(`   -> ${trips.length} trips created`);
+        const vehicleMap = {};
+        insertedVehicles.forEach(v => { vehicleMap[v.registrationNumber] = v._id; });
+        let tripCount = 0;
+        for (const t of tripSeedData) {
+            const vehicleId = vehicleMap[t.regNum];
+            if (!vehicleId) { console.warn(`   ⚠ Vehicle ${t.regNum} not in map, skipping`); continue; }
+            await Trip.create({
+                vehicle: vehicleId,
+                driver: t.driver,
+                type: t.type,
+                region: t.region,
+                status: t.status,
+                departure: t.departure,
+            });
+            tripCount++;
+        }
+        console.log(`   -> ${tripCount} trips created`);
 
         // Seed Maintenance
         console.log('Seeding Maintenance...');

@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 const driverSchema = new mongoose.Schema(
     {
         driverName: { type: String, required: true, trim: true },
+        email: { type: String, required: true, unique: true, lowercase: true, trim: true },
         licenseNumber: { type: String, required: true, unique: true, trim: true },
         licenseCategory: { type: String, required: true, enum: ['Class A CDL', 'Class B CDL', 'Class C', 'Standard Passenger'] },
         expiryDate: { type: String, required: true },
