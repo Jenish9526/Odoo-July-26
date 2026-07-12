@@ -1,0 +1,125 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@layer base {
+  :root {
+    --bg-color: #05070f;
+    --text-color: #f3f4f6;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+  
+  .light {
+    --bg-color: #fafafa;
+    --text-color: #09090b;
+    --border-color: rgba(0, 0, 0, 0.08);
+  }
+  
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+/* Linear-style Grid Overlays */
+.grid-bg {
+  background-size: 24px 24px;
+  background-image: 
+    linear-gradient(to right, rgba(128, 128, 128, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(128, 128, 128, 0.04) 1px, transparent 1px);
+}
+
+.light .grid-bg {
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+}
+
+/* Glassmorphism custom classes */
+.glass-panel {
+  background: rgba(13, 17, 29, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.light .glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.02);
+}
+
+.glass-card {
+  background: linear-gradient(135deg, rgba(13, 17, 29, 0.8) 0%, rgba(5, 7, 15, 0.9) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.light .glass-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(249, 250, 251, 0.95) 100%);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.04);
+}
+
+/* Customized scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1f293d;
+  border-radius: 3px;
+}
+
+.light ::-webkit-scrollbar-thumb,
+.light::-webkit-scrollbar-thumb {
+  background: #e4e4e7;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8b5cf6;
+}
+
+/* Keyframe animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Stripe/Linear Style Glowing Borders (Standard Background Clip technique) */
+.border-glow {
+  border: 1px solid transparent;
+  background-image: linear-gradient(rgba(13, 17, 29, 0.8), rgba(13, 17, 29, 0.8)), 
+                    linear-gradient(to bottom right, rgba(139, 92, 246, 0.15), rgba(6, 182, 212, 0.15));
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  transition: background-image 0.3s ease;
+}
+
+.light .border-glow {
+  background-image: linear-gradient(white, white), 
+                    linear-gradient(to bottom right, rgba(139, 92, 246, 0.1), rgba(6, 182, 212, 0.1));
+}
+
+.border-glow:hover {
+  background-image: linear-gradient(rgba(13, 17, 29, 0.8), rgba(13, 17, 29, 0.8)), 
+                    linear-gradient(to bottom right, rgba(139, 92, 246, 0.4), rgba(6, 182, 212, 0.4));
+}
+
+.light .border-glow:hover {
+  background-image: linear-gradient(white, white), 
+                    linear-gradient(to bottom right, rgba(139, 92, 246, 0.35), rgba(6, 182, 212, 0.35));
+}
