@@ -10,7 +10,8 @@ import {
   RiUser3Line,
   RiSettings4Line,
   RiLogoutBoxRLine,
-  RiEBike2Line
+  RiEBike2Line,
+  RiQuestionLine
 } from 'react-icons/ri';
 import { useTheme } from '../../context/ThemeContext';
 import { useLayout } from '../../context/LayoutContext';
@@ -131,6 +132,15 @@ export default function Navbar() {
           {theme === 'dark' ? <RiSunLine size={20} className="animate-spin-slow" /> : <RiMoonLine size={20} />}
         </button>
 
+        {/* Help Icon Shortcut */}
+        <button
+          onClick={() => alert('TransitOps Smart Operations Help Center shortcut triggered.')}
+          className="p-2 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-slate-850 dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-white transition-all cursor-pointer"
+          title="Help Center"
+        >
+          <RiQuestionLine size={20} />
+        </button>
+
         {/* Notifications Tray */}
         <div className="relative" ref={notifRef}>
           <button
@@ -201,8 +211,8 @@ export default function Navbar() {
               <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full dark:border-slate-950" />
             </div>
             <div className="hidden lg:block text-left">
-              <p className="text-xs font-bold text-slate-700 dark:text-slate-200">Sarah Jenkins</p>
-              <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">Fleet Supervisor</p>
+              <p className="text-xs font-bold text-slate-700 dark:text-slate-200">Raven K.</p>
+              <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">Dispatcher</p>
             </div>
             <RiArrowDownSLine size={16} className={`text-slate-400 transition-transform ${showProfile ? 'rotate-180' : ''}`} />
           </button>

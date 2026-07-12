@@ -19,13 +19,12 @@ import { useLayout } from '../../context/LayoutContext';
 
 const menuItems = [
   { path: '/dashboard', label: 'Dashboard', icon: RiDashboard3Line, category: 'Fleet Management' },
-  { path: '/vehicles', label: 'Vehicles', icon: RiCarLine, category: 'Fleet Management' },
+  { path: '/vehicles', label: 'Fleet', icon: RiCarLine, category: 'Fleet Management' },
   { path: '/drivers', label: 'Drivers', icon: RiSteering2Line, category: 'Fleet Management' },
   { path: '/trips', label: 'Trips', icon: RiRouteLine, category: 'Operations' },
   { path: '/maintenance', label: 'Maintenance', icon: RiToolsLine, category: 'Operations' },
-  { path: '/fuel', label: 'Fuel', icon: RiGasStationLine, category: 'Operations' },
-  { path: '/expenses', label: 'Expenses', icon: RiMoneyDollarCircleLine, category: 'Finance' },
-  { path: '/reports', label: 'Reports', icon: RiFileChartLine, category: 'Finance' },
+  { path: '/fuel', label: 'Fuel & Expenses', icon: RiGasStationLine, category: 'Operations' },
+  { path: '/reports', label: 'Reports & Analytics', icon: RiFileChartLine, category: 'Finance' },
   { path: '/settings', label: 'Settings', icon: RiSettings4Line, category: 'System' },
 ];
 
@@ -106,19 +105,19 @@ export default function Sidebar() {
                         className={({ isActive }) => `
                           relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group
                           ${isActive 
-                            ? 'bg-sky-500/10 text-sky-600 dark:bg-sky-550/15 dark:text-sky-400' 
-                            : 'text-slate-650 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/60 hover:text-slate-950 dark:hover:text-white'}
+                            ? 'bg-orange-500/10 text-orange-600 dark:bg-orange-550/15 dark:text-orange-450' 
+                            : 'text-slate-655 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/60 hover:text-slate-950 dark:hover:text-white'}
                         `}
                       >
                         {({ isActive }) => (
                           <>
                             {isActive && (
-                              <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-sky-500 rounded-r-full" />
+                              <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-orange-500 rounded-r-full" />
                             )}
                             
                             <Icon 
                               size={20} 
-                              className={`flex-shrink-0 transition-transform group-hover:scale-105 ${isActive ? 'text-sky-500' : 'text-slate-450 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-350'}`} 
+                              className={`flex-shrink-0 transition-transform group-hover:scale-105 ${isActive ? 'text-orange-500' : 'text-slate-450 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-350'}`} 
                             />
 
                             {!isSidebarCollapsed && (
