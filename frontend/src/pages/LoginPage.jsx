@@ -1,289 +1,399 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Mail, 
-  Lock, 
-  Eye, 
-  EyeOff, 
-  ArrowRight, 
-  ShieldCheck, 
-  Car, 
-  User, 
-  AlertCircle,
-  Sun,
-  Moon
-} from 'lucide-react';
-import { useTheme } from '../context/ThemeContext';
-import LogisticsIllustration from '../components/LogisticsIllustration';
+import {
+  MdAdminPanelSettings,
+  MdOutlineRoute,
+  MdLocalShipping,
+  MdRocketLaunch,
+} from 'react-icons/md';
+import {
+  RiMailLine,
+  RiLockPasswordLine,
+  RiEyeLine,
+  RiEyeOffLine,
+  RiArrowRightLine,
+  RiAlertLine,
+  RiCheckboxCircleLine,
+  RiShieldCheckLine,
+} from 'react-icons/ri';
 
-// Seed demo credentials per role for quick login demonstration
-const demoCredentials = {
-  Administrator: { email: 'admin@transitops.com', password: 'adminpassword' },
-  Dispatcher: { email: 'dispatch@transitops.com', password: 'dispatchpassword' },
-  Driver: { email: 'driver@transitops.com', password: 'driverpassword' }
-};
+
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+const ROLES = [
+  {
+    role: 'Administrator',
+    email: 'admin@transitops.com',
+    password: 'TransitOps@2026',
+    color: '#6366f1',
+    badge: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40',
+    Icon: MdAdminPanelSettings,
+    iconColor: 'text-indigo-400',
+    desc: 'Full system access',
+  },
+  {
+    role: 'Dispatcher',
+    email: 'dispatcher@transitops.com',
+    password: 'Dispatch@123',
+    color: '#0ea5e9',
+    badge: 'bg-sky-500/20 text-sky-300 border-sky-500/40',
+    Icon: MdOutlineRoute,
+    iconColor: 'text-sky-400',
+    desc: 'Trip & route control',
+  },
+  {
+    role: 'Driver',
+    email: 'driver@transitops.com',
+    password: 'Driver@123',
+    color: '#22c55e',
+    badge: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
+    Icon: MdLocalShipping,
+    iconColor: 'text-emerald-400',
+    desc: 'Trip assignments',
+  },
+];
+
+// Animated floating particle canvas
+function ParticleCanvas() {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    let w = (canvas.width = window.innerWidth);
+    let h = (canvas.height = window.innerHeight);
+    let animId;
+
+    const particles = Array.from({ length: 60 }, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      r: Math.random() * 2 + 0.5,
+      dx: (Math.random() - 0.5) * 0.4,
+      dy: (Math.random() - 0.5) * 0.4,
+      alpha: Math.random() * 0.5 + 0.1,
+    }));
+
+    function draw() {
+      ctx.clearRect(0, 0, w, h);
+      particles.forEach((p) => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(148,163,184,${p.alpha})`;
+        ctx.fill();
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.x < 0 || p.x > w) p.dx *= -1;
+        if (p.y < 0 || p.y > h) p.dy *= -1;
+      });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dist = Math.hypot(particles[i].x - particles[j].x, particles[i].y - particles[j].y);
+          if (dist < 100) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(148,163,184,${0.12 * (1 - dist / 100)})`;
+            ctx.lineWidth = 0.6;
+            ctx.stroke();
+          }
+        }
+      }
+      animId = requestAnimationFrame(draw);
+    }
+
+    draw();
+
+    const handleResize = () => {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />;
+}
 
 export default function LoginPage() {
-  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
-  const [activeRole, setActiveRole] = useState('Administrator');
-  const [email, setEmail] = useState(demoCredentials.Administrator.email);
-  const [password, setPassword] = useState(demoCredentials.Administrator.password);
-  
+
+  const [activeRole, setActiveRole] = useState(ROLES[0]);
+  const [email, setEmail] = useState(ROLES[0].email);
+  const [password, setPassword] = useState(ROLES[0].password);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
-  // Handle role badge toggle
-  const handleRoleChange = (role) => {
-    setActiveRole(role);
-    setEmail(demoCredentials[role].email);
-    setPassword(demoCredentials[role].password);
+  const handleRoleSelect = (r) => {
+    setActiveRole(r);
+    setEmail(r.email);
+    setPassword(r.password);
     setErrors({});
     setServerError('');
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-    if (!email.trim()) {
-      newErrors.email = 'Email address is required';
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Please enter a valid email address';
-    }
-
-    if (!password) {
-      newErrors.password = 'Password is required';
-    } else if (password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const validate = () => {
+    const e = {};
+    if (!email.trim()) e.email = 'Email is required';
+    else if (!/\S+@\S+\.\S+/.test(email)) e.email = 'Enter a valid email';
+    if (!password) e.password = 'Password is required';
+    else if (password.length < 6) e.password = 'Min 6 characters';
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setServerError('');
-    
-    if (validateForm()) {
-      setLoading(true);
-      
-      // Simulate API network latency
-      setTimeout(() => {
-        const selectedCreds = demoCredentials[activeRole];
-        
-        if (email === selectedCreds.email && password === selectedCreds.password) {
-          setLoading(false);
-          // Redirect to main command center dashboard
-          navigate('/dashboard');
-        } else {
-          setLoading(false);
-          setServerError('Invalid credentials. Please verify your email and password.');
-        }
-      }, 1500);
+    if (!validate()) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, rememberMe }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        setSuccess(true);
+        setTimeout(() => {
+          const role = data.user.role;
+          if (role === 'Driver') navigate('/driver-dashboard');
+          else if (role === 'Dispatcher') navigate('/dispatcher-dashboard');
+          else navigate('/dashboard');
+        }, 800);
+      } else {
+        setServerError(data.message || 'Invalid credentials');
+      }
+    } catch {
+      setServerError('Cannot connect to server. Make sure the backend is running.');
+    } finally {
+      setLoading(false);
     }
   };
 
+  const inputBase =
+    'w-full bg-white/5 border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-all duration-200 focus:ring-2';
+  const inputClass = (field) =>
+    `${inputBase} ${errors[field]
+      ? 'border-red-500/60 focus:ring-red-500/30'
+      : 'border-white/10 focus:border-sky-500/60 focus:ring-sky-500/20'
+    }`;
+
   return (
-    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-12 bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300">
-      
-      {/* Light/Dark mode floating switcher */}
-      <div className="absolute top-4 right-4 z-50">
-        <button
-          onClick={toggleTheme}
-          className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 text-slate-500 dark:text-slate-400 hover:text-sky-500 shadow-sm backdrop-blur-xs transition-all cursor-pointer"
-        >
-          {theme === 'dark' ? <Sun size={18} className="text-amber-500 animate-spin-slow" /> : <Moon size={18} />}
-        </button>
+    /* Login page is always dark-themed — background forced regardless of system theme */
+    <div className="relative min-h-screen flex items-center justify-center bg-slate-950 overflow-hidden">
+
+      {/* Gradient blobs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div
+          className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full opacity-20 blur-3xl"
+          style={{ background: 'radial-gradient(circle, #6366f1 0%, transparent 70%)' }}
+        />
+        <div
+          className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full opacity-20 blur-3xl"
+          style={{ background: 'radial-gradient(circle, #0ea5e9 0%, transparent 70%)' }}
+        />
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full opacity-10 blur-3xl"
+          style={{ background: 'radial-gradient(circle, #22c55e 0%, transparent 70%)' }}
+        />
       </div>
 
-      {/* LEFT SIDE PANEL: Logistics Illustration & Info (Hidden on mobile) */}
-      <div className="hidden lg:flex lg:col-span-6 xl:col-span-7 flex-col justify-between p-12 bg-slate-900 text-white relative">
-        {/* Branding header info */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-sky-500 text-white font-extrabold text-lg shadow-md shadow-sky-500/25">
-            T
-          </div>
-          <span className="font-extrabold text-xl tracking-tight bg-gradient-to-r from-sky-400 to-blue-500 bg-clip-text text-transparent">
-            TransitOps
-          </span>
-        </div>
+      {/* Particle network */}
+      <ParticleCanvas />
 
-        {/* Live Vector SVG Illustration */}
-        <div className="flex-1 flex items-center justify-center py-6">
-          <LogisticsIllustration />
-        </div>
 
-        {/* Description Text Panel */}
-        <div className="space-y-4 max-w-lg">
-          <span className="text-[10px] font-bold text-orange-500 uppercase tracking-widest bg-orange-500/10 px-2.5 py-1 rounded-full border border-orange-500/20">
-            Smart Transport Operations Platform
-          </span>
-          <h2 className="text-3xl font-black tracking-tight leading-tight mt-2">
-            Integrated fleet intelligence at your fingertips.
-          </h2>
-          <p className="text-sm text-slate-450 leading-relaxed">
-            Manage Vehicles, Drivers, Trips, Maintenance schedules, and operational Expenses from a single unified workspace.
-          </p>
+
+      {/* ── Branding (top-left) ── */}
+      <div className="absolute top-5 left-6 z-50 flex items-center gap-2.5">
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-sky-500/30">
+          <RiShieldCheckLine size={18} className="text-white" />
         </div>
+        <span className="font-extrabold text-lg text-white tracking-tight">TransitOps</span>
       </div>
 
-      {/* RIGHT SIDE PANEL: Translucent Credentials Card */}
-      <div className="col-span-12 lg:col-span-6 xl:col-span-5 flex flex-col justify-between p-6 sm:p-12 md:p-20 lg:p-12 xl:p-16">
-        
-        {/* Mobile branding header */}
-        <div className="flex items-center gap-2.5 lg:hidden mb-8">
-          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-sky-500 text-white font-black text-sm">
-            T
-          </div>
-          <span className="font-extrabold text-lg bg-gradient-to-r from-sky-500 to-blue-600 bg-clip-text text-transparent">
-            TransitOps
-          </span>
-        </div>
+      {/* ── Main card ── */}
+      <div className="relative z-10 w-full max-w-md mx-4">
+        <div className="bg-slate-900/80 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 shadow-2xl">
 
-        <div className="flex-1 flex flex-col justify-center max-w-md w-full mx-auto space-y-8">
-          
-          {/* Headline Text */}
-          <div className="space-y-2">
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-slate-100">
-              Welcome back
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-              Select your organization role below to access the platform.
-            </p>
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 shadow-lg shadow-sky-500/30 mb-4">
+              <MdRocketLaunch size={30} className="text-white" />
+            </div>
+            <h1 className="text-2xl font-black text-white">Welcome back</h1>
+            <p className="text-slate-400 text-sm mt-1">Sign in to your operations dashboard</p>
           </div>
 
-          {/* Role badge selector tabs */}
-          <div className="grid grid-cols-3 gap-2 p-1 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200/40 dark:border-slate-800/40">
-            {Object.keys(demoCredentials).map((role) => {
-              const isActive = activeRole === role;
-              return (
+          {/* Role selector */}
+          <div className="mb-6">
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Quick role login</p>
+            <div className="grid grid-cols-3 gap-2">
+              {ROLES.map((r) => (
                 <button
-                  key={role}
-                  onClick={() => handleRoleChange(role)}
-                  className={`py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex flex-col items-center gap-1
-                    ${isActive 
-                      ? 'bg-white dark:bg-slate-950 text-sky-600 dark:text-sky-400 shadow-sm border border-slate-200/60 dark:border-slate-850' 
-                      : 'text-slate-500 hover:text-slate-800 dark:hover:text-white'}`}
+                  key={r.role}
+                  type="button"
+                  onClick={() => handleRoleSelect(r)}
+                  className={`relative flex flex-col items-center gap-1.5 p-3 rounded-2xl border text-center transition-all duration-200 cursor-pointer ${activeRole.role === r.role
+                    ? 'border-white/20 bg-white/10 shadow-lg'
+                    : 'border-white/5 bg-white/3 hover:bg-white/8 hover:border-white/10'
+                    }`}
                 >
-                  {role === 'Administrator' && <ShieldCheck size={14} />}
-                  {role === 'Dispatcher' && <User size={14} />}
-                  {role === 'Driver' && <Car size={14} />}
-                  <span>{role}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Form Card (Glassmorphism design) */}
-          <div className="p-6 rounded-2xl border border-slate-200/80 dark:border-slate-850/50 bg-white/70 dark:bg-slate-950/40 backdrop-blur-md shadow-xl space-y-6">
-            
-            {/* Server side authentication errors */}
-            {serverError && (
-              <div className="flex items-center gap-2 p-3 rounded-lg bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 text-xs text-red-655 dark:text-red-400 font-semibold animate-shake">
-                <AlertCircle size={16} className="flex-shrink-0" />
-                <span>{serverError}</span>
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              
-              {/* Email Input */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 dark:text-slate-400">Email Address</label>
-                <div className="relative flex items-center">
-                  <Mail className={`absolute left-3 w-4 h-4 transition-colors ${errors.email ? 'text-red-500' : 'text-slate-400'}`} />
-                  <input
-                    type="email"
-                    placeholder="name@transitops.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className={`w-full pl-10 pr-4 py-2 text-sm border rounded-xl outline-none focus:ring-1 focus:ring-sky-500 transition-all bg-white dark:bg-slate-900/60 dark:text-white
-                      ${errors.email ? 'border-red-500 focus:border-red-500' : 'border-slate-200 dark:border-slate-800 focus:border-sky-500'}`}
+                  {activeRole.role === r.role && (
+                    <div
+                      className="absolute inset-0 rounded-2xl opacity-15 blur-sm"
+                      style={{ background: `radial-gradient(circle, ${r.color}, transparent)` }}
+                    />
+                  )}
+                  {/* React Icon instead of emoji */}
+                  <r.Icon
+                    size={22}
+                    className={`relative z-10 ${activeRole.role === r.role ? r.iconColor : 'text-slate-500'}`}
                   />
-                </div>
-                {errors.email && (
-                  <span className="text-[10px] text-red-500 font-semibold mt-1 block">{errors.email}</span>
-                )}
-              </div>
-
-              {/* Password Input */}
-              <div className="space-y-1.5">
-                <div className="flex justify-between items-center">
-                  <label className="text-xs font-bold text-slate-500 dark:text-slate-400">Password</label>
-                  <a href="#forgot" className="text-[11px] font-bold text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300">
-                    Forgot Password?
-                  </a>
-                </div>
-                <div className="relative flex items-center">
-                  <Lock className={`absolute left-3 w-4 h-4 transition-colors ${errors.password ? 'text-red-500' : 'text-slate-400'}`} />
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="Enter password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className={`w-full pl-10 pr-10 py-2 text-sm border rounded-xl outline-none focus:ring-1 focus:ring-sky-500 transition-all bg-white dark:bg-slate-900/60 dark:text-white
-                      ${errors.password ? 'border-red-500 focus:border-red-500' : 'border-slate-200 dark:border-slate-800 focus:border-sky-500'}`}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 text-slate-400 hover:text-slate-650 dark:hover:text-white"
+                  <span
+                    className={`relative z-10 text-[10px] font-bold leading-tight ${activeRole.role === r.role ? 'text-white' : 'text-slate-500'
+                      }`}
                   >
-                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
-                </div>
-                {errors.password && (
-                  <span className="text-[10px] text-red-500 font-semibold mt-1 block">{errors.password}</span>
-                )}
-              </div>
-
-              {/* Remember Me */}
-              <div className="flex items-center gap-2 py-1">
-                <input
-                  type="checkbox"
-                  id="remember"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500 dark:bg-slate-900 dark:border-slate-800"
-                />
-                <label htmlFor="remember" className="text-xs text-slate-500 dark:text-slate-400 select-none cursor-pointer">
-                  Remember my session on this device
-                </label>
-              </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-bold text-white bg-sky-500 hover:bg-sky-600 rounded-xl transition-all shadow-md shadow-sky-500/10 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? (
-                  <div className="w-5 h-5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                ) : (
-                  <>
-                    <span>Access Dashboard</span>
-                    <ArrowRight size={16} />
-                  </>
-                )}
-              </button>
-
-            </form>
+                    {r.role}
+                  </span>
+                  {activeRole.role === r.role && (
+                    <span className={`relative z-10 text-[9px] px-1.5 py-0.5 rounded-full border font-semibold ${r.badge}`}>
+                      Active
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
-          
-        </div>
 
-        {/* Footer section */}
-        <div className="text-center pt-8 border-t border-slate-100 dark:border-slate-900/60 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400 dark:text-slate-500">
-          <span>© 2026 TransitOps. All rights reserved.</span>
-          <span className="font-medium text-[10px]">Secure 256-bit SSL encrypted.</span>
-        </div>
+          {/* Divider */}
+          <div className="flex items-center gap-3 mb-6">
+            <div className="flex-1 h-px bg-white/8" />
+            <span className="text-xs text-slate-600">or enter manually</span>
+            <div className="flex-1 h-px bg-white/8" />
+          </div>
 
+          {/* Alerts */}
+          {serverError && (
+            <div className="mb-4 flex items-start gap-2.5 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-medium">
+              <RiAlertLine size={15} className="mt-0.5 flex-shrink-0" />
+              {serverError}
+            </div>
+          )}
+          {success && (
+            <div className="mb-4 flex items-center gap-2.5 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
+              <RiCheckboxCircleLine size={15} className="flex-shrink-0" />
+              Login successful! Redirecting…
+            </div>
+          )}
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Email */}
+            <div>
+              <label className="text-xs font-bold text-slate-400 mb-1.5 block">Email Address</label>
+              <div className="relative">
+                <RiMailLine size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => { setEmail(e.target.value); setErrors(p => ({ ...p, email: null })); }}
+                  placeholder="name@transitops.com"
+                  className={`${inputClass('email')} pl-9`}
+                />
+              </div>
+              {errors.email && <p className="text-red-400 text-[11px] mt-1">{errors.email}</p>}
+            </div>
+
+            {/* Password */}
+            <div>
+              <label className="text-xs font-bold text-slate-400 mb-1.5 block">Password</label>
+              <div className="relative">
+                <RiLockPasswordLine size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => { setPassword(e.target.value); setErrors(p => ({ ...p, password: null })); }}
+                  placeholder="Enter your password"
+                  className={`${inputClass('password')} pl-9 pr-10`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                >
+                  {showPassword ? <RiEyeOffLine size={15} /> : <RiEyeLine size={15} />}
+                </button>
+              </div>
+              {errors.password && <p className="text-red-400 text-[11px] mt-1">{errors.password}</p>}
+            </div>
+
+            {/* Remember me toggle */}
+            <div className="flex items-center justify-between">
+              <label className="flex items-center gap-2 cursor-pointer group">
+                <div className="relative">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="sr-only peer"
+                  />
+                  <div className="w-9 h-5 bg-white/10 border border-white/10 rounded-full peer-checked:bg-sky-500 transition-all duration-200" />
+                  <div className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-all duration-200 peer-checked:translate-x-4 shadow-sm" />
+                </div>
+                <span className="text-xs text-slate-400 group-hover:text-slate-300 transition-colors select-none">
+                  Remember me
+                </span>
+              </label>
+              <button type="button" className="text-xs text-sky-400 hover:text-sky-300 font-medium transition-colors">
+                Forgot password?
+              </button>
+            </div>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={loading || success}
+              className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold text-white transition-all duration-200 shadow-lg cursor-pointer mt-2 ${loading || success
+                ? 'opacity-60 cursor-not-allowed bg-sky-600'
+                : 'bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 hover:shadow-sky-500/25 hover:scale-[1.01] active:scale-[0.99]'
+                }`}
+            >
+              {loading ? (
+                <div className="w-5 h-5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+              ) : success ? (
+                <>
+                  <RiCheckboxCircleLine size={17} />
+                  <span>Authenticated!</span>
+                </>
+              ) : (
+                <>
+                  <span>Access Dashboard</span>
+                  <RiArrowRightLine size={17} />
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Footer */}
+          <p className="text-center text-[11px] text-slate-600 mt-6">
+            © 2026 TransitOps · Secured with 256-bit SSL encryption
+          </p>
+
+        </div>
       </div>
-
     </div>
   );
 }

@@ -1,7 +1,16 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
+import ProtectedRoute from './components/ProtectedRoute';
+
+// Public
 import LoginPage from './pages/LoginPage';
+
+// Standalone Role Dashboards
+import DispatcherDashboard from './pages/DispatcherDashboard';
+import DriverDashboard from './pages/DriverDashboard';
+
+// Full feature shell (admin / fleet manager)
 import DashboardLayout from './components/Layout/DashboardLayout';
 import DashboardOverview from './pages/DashboardOverview';
 import VehicleManagement from './pages/VehicleManagement';
@@ -18,12 +27,23 @@ function App() {
     <ThemeProvider>
       <BrowserRouter>
         <Routes>
-          {/* Main Public Routes */}
+          {/* ── Public ── */}
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<LoginPage />} />
-          
-          {/* Protected Dashboard Shell Routes */}
-          <Route path="/" element={<DashboardLayout />}>
+
+          {/* ── Standalone Role Dashboards ── */}
+          <Route path="/dispatcher-dashboard" element={<DispatcherDashboard />} />
+          <Route path="/driver-dashboard" element={<DriverDashboard />} />
+
+          {/* ── Full-feature Dashboard Shell (admin / fleet manager) ── */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute allowedRoles={['Administrator', 'Fleet Manager', 'Safety Officer', 'Financial Analyst']}>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }
+          >
             <Route path="dashboard" element={<DashboardOverview />} />
             <Route path="vehicles" element={<VehicleManagement />} />
             <Route path="drivers" element={<DriverManagement />} />
@@ -35,7 +55,7 @@ function App() {
             <Route path="settings" element={<SettingsRBAC />} />
           </Route>
 
-          {/* Wildcard Fallback */}
+          {/* ── Wildcard ── */}
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </BrowserRouter>

@@ -6,6 +6,7 @@ const DRIVER_STATUSES = ['Available', 'On Trip', 'Off Duty', 'Suspended'];
 export default function DriverForm({ driver, onSubmit, onCancel }) {
   const [formData, setFormData] = useState({
     driverName: '',
+    email: '',
     licenseNumber: '',
     licenseCategory: 'Class A CDL',
     expiryDate: '',
@@ -20,6 +21,7 @@ export default function DriverForm({ driver, onSubmit, onCancel }) {
     if (driver) {
       setFormData({
         driverName: driver.driverName || '',
+        email: driver.email || '',
         licenseNumber: driver.licenseNumber || '',
         licenseCategory: driver.licenseCategory || 'Class A CDL',
         expiryDate: driver.expiryDate || '',
@@ -34,6 +36,11 @@ export default function DriverForm({ driver, onSubmit, onCancel }) {
     const newErrors = {};
     if (!formData.driverName.trim()) {
       newErrors.driverName = 'Driver Name is required';
+    }
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Enter a valid email address';
     }
 
     if (!formData.licenseNumber.trim()) {
@@ -99,7 +106,7 @@ export default function DriverForm({ driver, onSubmit, onCancel }) {
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Form Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        
+
         {/* Driver Name */}
         <div className="flex flex-col">
           <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Driver Name</label>
@@ -110,12 +117,31 @@ export default function DriverForm({ driver, onSubmit, onCancel }) {
             onChange={handleChange}
             placeholder="e.g. John Doe"
             className={`px-3 py-2 text-sm rounded-lg border focus:outline-none transition-all
-              ${errors.driverName 
-                ? 'border-red-500 bg-red-50/20 focus:ring-1 focus:ring-red-500 dark:bg-red-955/10' 
+              ${errors.driverName
+                ? 'border-red-500 bg-red-50/20 focus:ring-1 focus:ring-red-500 dark:bg-red-955/10'
                 : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 dark:text-white focus:border-sky-500 focus:ring-1 focus:ring-sky-500'}`}
           />
           {errors.driverName && (
             <span className="text-[10px] text-red-500 mt-1 font-medium">{errors.driverName}</span>
+          )}
+        </div>
+
+        {/* Email */}
+        <div className="flex flex-col">
+          <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">Email Address</label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="e.g. john@transitops.com"
+            className={`px-3 py-2 text-sm rounded-lg border focus:outline-none transition-all
+              ${errors.email
+                ? 'border-red-500 bg-red-50/20 focus:ring-1 focus:ring-red-500 dark:bg-red-955/10'
+                : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 dark:text-white focus:border-sky-500 focus:ring-1 focus:ring-sky-500'}`}
+          />
+          {errors.email && (
+            <span className="text-[10px] text-red-500 mt-1 font-medium">{errors.email}</span>
           )}
         </div>
 
@@ -129,8 +155,8 @@ export default function DriverForm({ driver, onSubmit, onCancel }) {
             onChange={handleChange}
             placeholder="e.g. DL-1029384"
             className={`px-3 py-2 text-sm rounded-lg border focus:outline-none transition-all
-              ${errors.licenseNumber 
-                ? 'border-red-500 bg-red-50/20 focus:ring-1 focus:ring-red-500 dark:bg-red-955/10' 
+              ${errors.licenseNumber
+                ? 'border-red-500 bg-red-50/20 focus:ring-1 focus:ring-red-500 dark:bg-red-955/10'
                 : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 dark:text-white focus:border-sky-500 focus:ring-1 focus:ring-sky-500'}`}
           />
           {errors.licenseNumber && (
@@ -162,8 +188,8 @@ export default function DriverForm({ driver, onSubmit, onCancel }) {
             value={formData.expiryDate}
             onChange={handleChange}
             className={`px-3 py-2 text-sm rounded-lg border focus:outline-none transition-all dark:color-scheme-dark
-              ${errors.expiryDate 
-                ? 'border-red-500 bg-red-50/20 focus:ring-1 focus:ring-red-500 dark:bg-red-955/10' 
+              ${errors.expiryDate
+                ? 'border-red-500 bg-red-50/20 focus:ring-1 focus:ring-red-500 dark:bg-red-955/10'
                 : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 dark:text-white focus:border-sky-500 focus:ring-1 focus:ring-sky-500'}`}
           />
           {errors.expiryDate && (
@@ -181,8 +207,8 @@ export default function DriverForm({ driver, onSubmit, onCancel }) {
             onChange={handleChange}
             placeholder="e.g. +1-555-0198"
             className={`px-3 py-2 text-sm rounded-lg border focus:outline-none transition-all
-              ${errors.phone 
-                ? 'border-red-500 bg-red-50/20 focus:ring-1 focus:ring-red-500 dark:bg-red-955/10' 
+              ${errors.phone
+                ? 'border-red-500 bg-red-50/20 focus:ring-1 focus:ring-red-500 dark:bg-red-955/10'
                 : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 dark:text-white focus:border-sky-500 focus:ring-1 focus:ring-sky-500'}`}
           />
           {errors.phone && (
@@ -202,8 +228,8 @@ export default function DriverForm({ driver, onSubmit, onCancel }) {
             min="0"
             max="100"
             className={`px-3 py-2 text-sm rounded-lg border focus:outline-none transition-all
-              ${errors.safetyScore 
-                ? 'border-red-500 bg-red-50/20 focus:ring-1 focus:ring-red-500 dark:bg-red-955/10' 
+              ${errors.safetyScore
+                ? 'border-red-500 bg-red-50/20 focus:ring-1 focus:ring-red-500 dark:bg-red-955/10'
                 : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 dark:text-white focus:border-sky-500 focus:ring-1 focus:ring-sky-500'}`}
           />
           {errors.safetyScore && (
