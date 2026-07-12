@@ -100,8 +100,8 @@ export default function FuelExpenses() {
   // Submit Expense Log
   const handleExpenseSubmit = (e) => {
     e.preventDefault();
-    if (!expenseTripId || !expenseVehicle || !expenseToll || !expenseOther || !expenseMaint) {
-      alert('Please fill out all required fields.');
+    if (!expenseTripId || !expenseVehicle) {
+      alert('Please fill out Trip ID and Vehicle fields.');
       return;
     }
 
@@ -370,14 +370,14 @@ export default function FuelExpenses() {
                   <th className="px-6 py-3">Other</th>
                   <th className="px-6 py-3">Maint. (Linked)</th>
                   <th className="px-6 py-3">Total</th>
+                  <th className="px-6 py-3">Status</th>
                   <th className="px-6 py-3 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-900 text-slate-705 dark:text-slate-300">
                 {paginatedExpenses.length === 0 ? (
                   <tr>
-                    <td colSpan="7" className="text-center py-8 text-slate-450 font-medium">
-                      No expense logs match search queries.
+                    <td colSpan="8" className="text-center py-8 text-slate-450 font-medium">
                     </td>
                   </tr>
                 ) : (
@@ -388,6 +388,7 @@ export default function FuelExpenses() {
                       <td className="px-6 py-3 font-medium">${exp.toll.toLocaleString()}</td>
                       <td className="px-6 py-3 font-medium">${exp.other.toLocaleString()}</td>
                       <td className="px-6 py-3 font-medium">${exp.maint.toLocaleString()}</td>
+                      <td className="px-6 py-3 font-bold">${(exp.toll + exp.other + exp.maint).toLocaleString()}</td>
                       <td className="px-6 py-3">
                         <span className={`inline-flex px-3 py-0.5 text-[9px] font-bold rounded-full border ${STATUS_CLASSES[exp.status] || ''}`}>
                           {exp.status}

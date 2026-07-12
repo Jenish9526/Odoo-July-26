@@ -1,6 +1,7 @@
 import Vehicle from '../models/Vehicle.js';
+import asyncHandler from '../middleware/asyncHandler.js';
 
-export const getVehicles = async (req, res) => {
+export const getVehicles = asyncHandler(async (req, res) => {
   const { type, status, search } = req.query;
   const filter = {};
 
@@ -16,32 +17,35 @@ export const getVehicles = async (req, res) => {
 
   const vehicles = await Vehicle.find(filter).sort({ createdAt: -1 });
   res.json({ success: true, data: vehicles });
-};
+});
 
-export const getVehicleById = async (req, res) => {
+export const getVehicleById = asyncHandler(async (req, res) => {
   const vehicle = await Vehicle.findById(req.params.id);
   if (!vehicle) return res.status(404).json({ success: false, message: 'Vehicle not found' });
   res.json({ success: true, data: vehicle });
-};
+});
 
-export const createVehicle = async (req, res) => {
+export const createVehicle = asyncHandler(async (req, res) => {
   const vehicle = await Vehicle.create(req.body);
   res.status(201).json({ success: true, data: vehicle });
-};
+});
 
-export const updateVehicle = async (req, res) => {
-  const vehicle = await Vehicle.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+export const updateVehicle = asyncHandler(async (req, res) => {
+  const vehicle = await Vehicle.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
   if (!vehicle) return res.status(404).json({ success: false, message: 'Vehicle not found' });
   res.json({ success: true, data: vehicle });
-};
+});
 
-export const deleteVehicle = async (req, res) => {
+export const deleteVehicle = asyncHandler(async (req, res) => {
   const vehicle = await Vehicle.findByIdAndDelete(req.params.id);
   if (!vehicle) return res.status(404).json({ success: false, message: 'Vehicle not found' });
   res.json({ success: true, message: 'Vehicle deleted' });
-};
+});
 
-export const getVehicleStats = async (req, res) => {
+export const getVehicleStats = asyncHandler(async (req, res) => {
   const [total, available, onTrip, inShop, retired] = await Promise.all([
     Vehicle.countDocuments(),
     Vehicle.countDocuments({ status: 'Available' }),
@@ -50,4 +54,4 @@ export const getVehicleStats = async (req, res) => {
     Vehicle.countDocuments({ status: 'Retired' }),
   ]);
   res.json({ success: true, data: { total, available, onTrip, inShop, retired } });
-};
+});

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const VEHICLE_TYPES = ['Sedan', 'SUV', 'Truck', 'Van', 'Electric', 'Hybrid'];
+const VEHICLE_TYPES = ['Sedan', 'SUV', 'Truck', 'Van', 'Electric', 'Hybrid', 'Minivan'];
 const VEHICLE_STATUSES = ['Available', 'On Trip', 'In Shop', 'Retired'];
 
 export default function VehicleForm({ vehicle, onSubmit, onCancel }) {

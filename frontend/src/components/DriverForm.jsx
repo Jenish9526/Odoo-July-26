@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const LICENSE_CATEGORIES = ['Class A CDL', 'Class B CDL', 'Class C', 'Motorcycle', 'Standard Passenger'];
+const LICENSE_CATEGORIES = ['Class A CDL', 'Class B CDL', 'Class C', 'Standard Passenger'];
 const DRIVER_STATUSES = ['Available', 'On Trip', 'Off Duty', 'Suspended'];
 
 export default function DriverForm({ driver, onSubmit, onCancel }) {

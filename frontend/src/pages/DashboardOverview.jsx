@@ -321,6 +321,7 @@ export default function DashboardOverview() {
                   <th className="px-4 py-3 text-right">Actions</th>
                 </tr>
               </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-900 text-slate-700 dark:text-slate-300">
                 {filteredTrips.length === 0 ? (
                   <tr>
                     <td colSpan="6" className="text-center py-6 text-slate-450 font-medium">
@@ -352,6 +353,7 @@ export default function DashboardOverview() {
                     </tr>
                   ))
                 )}
+              </tbody>
             </table>
           </div>
         </div>
